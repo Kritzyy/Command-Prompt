@@ -2,6 +2,7 @@
 using System.Collections;
 using KModkit;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 public class KritCMDPrompt : MonoBehaviour
 {
@@ -998,6 +999,21 @@ public class KritCMDPrompt : MonoBehaviour
         Debug.LogFormat("[Command Prompt #{0}] Attempted to close BombCMD.cmd! Strike handed", moduleId);
         return false;
     }
+#pragma warning disable 414
+	private readonly string TwitchHelpMessage =
+		"Use “!{0} press y”, or “!{0} press n” to press yes or no respectively.";
+#pragma warning restore 414
+	private KMSelectable[] ProcessTwitchCommand(string command)
+	{
+		if (Regex.IsMatch(command, @"\s*press\s*(?:y|yes)\s*$",
+			RegexOptions.CultureInvariant | RegexOptions.IgnoreCase))
+			return new[] { buttonY };
+
+		return Regex.IsMatch(command, @"\s*press\s*(?:n|no)\s*$",
+			RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)
+			? new[] { buttonN }
+			: null;
+	}
 }
 
 /* A list of possible Commands, Files or Extensions
